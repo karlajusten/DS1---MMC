@@ -21,7 +21,7 @@ public:
 	virtual ~MMC();
 
 	struct RNG_Parameters{
-		unsigned ling_seed;
+		uint64_t  ling_seed;
 	};
 
 	double random();
@@ -39,6 +39,8 @@ public:
 	void setRNGparameters(RNG_Parameters param);
 	RNG_Parameters getRNGparameters();
 
+private:
+	RNG_Parameters param;
 };
 
 #endif /* MMC_H_ */
