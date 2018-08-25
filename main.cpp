@@ -15,11 +15,6 @@ int main() {
 	MMC mmc;
 	uint32_t buffer[buffer_size];
 
-	MMC::RNG_Parameters seed;
-	seed.ling_seed = 0xb4a10f2ad63c43c1;
-
-	mmc.setRNGparameters(seed);
-
 	while (1) {
 
 	    for (int k = 0; k < buffer_size; k++)

@@ -22,6 +22,8 @@ public:
 
 	struct RNG_Parameters{
 		uint64_t  ling_seed;
+		uint64_t multiplier;
+		uint64_t increment; // an arbitrary odd constant
 	};
 
 	double random();
