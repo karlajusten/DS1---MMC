@@ -36,6 +36,8 @@ double  MMC::random(){
 	x ^= x >> 18;								 // ^: XOR Exclusivo
 
 	return rotr32((uint32_t)(x >> 27), count);
+  //64bit pack int64_t x = (pcg32() << 32) | pcg32();
+
 }
 
 uint32_t MMC::rotr32(uint32_t x, unsigned r)
@@ -52,12 +54,13 @@ MMC::RNG_Parameters  MMC::getRNGparameters(){
 }
 
 double MMC::uniform(double min, double max){
-    uint32_t x = random();
-    uint64_t m = uint64_t(x) * uint64_t(max - min);
-    return ( m  >> 32) + min; 
+	    uint64_t x = random();
+	     if (max == 1.0 && min == 0.0)
+	     	return ldexp(x, -32);  // pcg generate floats[0,1] nearest multiple of 1/2^32 
+	    uint64_t m =  x * double(max - min); 
+	    return (double) (m  >> 32) + min;
+	     
 }    
-
-
 
 double MMC::exponential(double mean){
 	if( mean == 0 ) {
@@ -91,6 +94,10 @@ double MMC::gamma(double mean, double alpha){
 	//std::cout << "pow(x, alpha-1) = "<< pow(x, alpha-1) << std::endl;
 	return 1/term * pow(x, alpha-1) * exp(-x/mean);
 }
+double erlang(double mean, int M){
+	//return this.gamma(mean, M)
+}
+
 
 double MMC::beta(double alpha, double beta, double infLimit, double supLimit){
 	double term = (tgamma(alpha)*tgamma(beta));
@@ -99,6 +106,14 @@ double MMC::beta(double alpha, double beta, double infLimit, double supLimit){
 	}
 	double x = random(); //PRECISA DE ALEATÓRIO UNIFORME!!!
 	return (tgamma(alpha+beta)/term)*pow(x, alpha-1)*pow(1-x, beta-1);
+}
+
+double weibull(double alpha, double scale){
+  double x = random();
+  double m = pow (-log (x), 1 / scale);
+
+  return alpha * m;
+
 }
 
 double MMC::logNormal(double mean, double stddev){
