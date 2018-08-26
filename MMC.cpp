@@ -55,17 +55,15 @@ double MMC::exponential(double mean){
 		throw "Division by zero condition at exponential distribution method!";
 	}
 	double x = random();
-	//double term = (double)(-(x/mean));
-	//std::cout << term << std::endl;
 	return (1/mean)*exp((double)(-(x/mean)));
-	//return -mean*log1p(-x);
 }
 
 double MMC::normal(double mean, double stddev){
 	if( stddev == 0 ) {
 		throw "Division by zero condition at normal distribution method!";
 	}
-	double num = (random()-mean);
+	double x = random();
+	double num = (x-mean);
 	//std::cout << "num = "<< num << std::endl;
 	//std::cout << "secondTerm = " << exp((double)-(num*num)/(2*stddev*stddev)) << std::endl;
 	//std::cout << "firstTerm = " << (1/(stddev*sqrt(2*M_PI))) << std::endl;

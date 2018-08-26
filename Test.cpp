@@ -36,7 +36,7 @@ void Test::random(){
 void Test::exponencial(){
 	const int nintervals=10; // number of intervals
 
-	double generator(3.5);
+	double generator = 3.5 ;
 
 	int p[nintervals]={};
 
@@ -46,8 +46,27 @@ void Test::exponencial(){
 	}*/
 
 	for (int i=0; i<nrolls; ++i) {
-	    double number = mmc.exponential(generator);
-	    if (number<1.0) ++p[int(nintervals*number)];
+	    long double number = mmc.exponential(generator);
+	    if(number>=0.9)
+	    	p[9]++;
+	    else if(number>=0.8)
+	    	p[8]++;
+	    else if(number>=0.7)
+	    	p[7]++;
+	    else if(number>=0.6)
+	    	p[6]++;
+	    else if(number>=0.5)
+	    	p[5]++;
+	    else if(number>=0.4)
+	    	p[4]++;
+	    else if(number>=0.3)
+	    	p[3]++;
+	    else if(number>=0.2)
+	    	p[2]++;
+	    else if(number>=0.1)
+	    	p[1]++;
+	    else if(number>=0)
+	    	p[0]++;
 	}
 
 	std::cout << "exponential(" << generator << "):" << std::endl;
