@@ -8,6 +8,7 @@
 #include "MMC.h"
 #include <stdint.h>
 #include <math.h>
+#include <iostream>
 
 MMC::MMC() {
 	RNG_Parameters defaul;
@@ -53,8 +54,11 @@ double MMC::exponential(double mean){
 	if( mean == 0 ) {
 		throw "Division by zero condition at exponential distribution method!";
 	}
-	return (1/mean)*exp((double)(-(random())/mean));
-
+	double x = random();
+	//double term = (double)(-(x/mean));
+	//std::cout << term << std::endl;
+	return (1/mean)*exp((double)(-(x/mean)));
+	//return -mean*log1p(-x);
 }
 
 double MMC::normal(double mean, double stddev){
@@ -62,15 +66,22 @@ double MMC::normal(double mean, double stddev){
 		throw "Division by zero condition at normal distribution method!";
 	}
 	double num = (random()-mean);
+	//std::cout << "num = "<< num << std::endl;
+	//std::cout << "secondTerm = " << exp((double)-(num*num)/(2*stddev*stddev)) << std::endl;
+	//std::cout << "firstTerm = " << (1/(stddev*sqrt(2*M_PI))) << std::endl;
 	return (1/(stddev*sqrt(2*M_PI)))*exp((double)-(num*num)/(2*stddev*stddev));
 }
 
 double MMC::gamma(double mean, double alpha){
-	double x = random();
+
 	double term = (tgamma(alpha)*pow(mean, alpha));
-	if( term == 0 || mean) {
+	//std::cout << "term = "<< term << std::endl;
+	if( term == 0 || mean==0) {
 		throw "Division by zero condition at gamma distribution method!";
 	}
+	double x = random();
+	//std::cout << "x = "<< random() << std::endl;
+	//std::cout << "pow(x, alpha-1) = "<< pow(x, alpha-1) << std::endl;
 	return 1/term * pow(x, alpha-1) * exp(-x/mean);
 }
 
@@ -79,10 +90,7 @@ double MMC::beta(double alpha, double beta, double infLimit, double supLimit){
 	if( term == 0 ) {
 		throw "Division by zero condition at beta distribution method!";
 	}
-	double x = random();
-	while(!(x>=infLimit && x<=supLimit)){
-		x = random();
-	}
+	double x = random(); //PRECISA DE ALEATÓRIO UNIFORME!!!
 	return (tgamma(alpha+beta)/term)*pow(x, alpha-1)*pow(1-x, beta-1);
 }
 

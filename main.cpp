@@ -3,25 +3,17 @@
  *
  */
 
-#include <stdio.h>
-#include "MMC.h"
-
-using namespace std;
-
-#define buffer_size 512
+#include "Test.h"
 
 int main() {
 
-	MMC mmc;
-	uint32_t buffer[buffer_size];
-
-	while (1) {
-
-	    for (int k = 0; k < buffer_size; k++)
-	    	buffer[k] = mmc.random();
-	    fwrite((void *)buffer, sizeof(buffer), 1, stdout);
-
-	}
+	Test teste;
+	// teste.random();
+	// teste.exponencial(); ERRO! função exp() faz resultar zero sempre...
+	// teste.normal(); ERRO! função exp() faz resultar zero sempre...
+	// teste.gamma(); ERRO! função exp() faz resultar zero sempre...
+	// teste.beta(); ERRO! precisa da função aleatorio uniforme...
+	// teste.logNormal(); ERRO! função exp() faz resultar zero sempre...
 
 	return 0;
 }
