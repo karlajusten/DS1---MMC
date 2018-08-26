@@ -35,8 +35,8 @@ void Test::random(){
 
 void Test::uniform(){
 
-int min = 10;
-int max = 20; 
+int min = 200;
+int max = 403; 
 
 
 std::cout << "uniform_distribution " << min << " - " << max << ":" << std::endl;
