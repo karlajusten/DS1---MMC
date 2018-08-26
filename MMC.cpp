@@ -3,6 +3,7 @@
  *
  *  Created on: 15 de ago de 2018
  *      Author: karla
+ *      Author: bruno
  */
 
 #include "MMC.h"
@@ -49,6 +50,15 @@ void  MMC::setRNGparameters(RNG_Parameters param){
 MMC::RNG_Parameters  MMC::getRNGparameters(){
 	return this->param;
 }
+
+double MMC::uniform(double min, double max){
+    uint32_t x = random();
+    uint64_t m = uint64_t(x) * uint64_t(max - min);
+    return  m  >> 32;
+//min * (1 - x) + max * x;
+}    
+
+
 
 double MMC::exponential(double mean){
 	if( mean == 0 ) {

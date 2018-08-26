@@ -14,6 +14,7 @@ public:
 	Test();
 	virtual ~Test();
 	void random();
+	void uniform();
 	void exponencial();
 	void normal();
 	void beta();

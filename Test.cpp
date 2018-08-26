@@ -33,6 +33,23 @@ void Test::random(){
 	}
 }
 
+void Test::uniform(){
+
+int min = 10;
+int max = 20; 
+
+
+std::cout << "uniform_distribution " << min << " - " << max << ":" << std::endl;
+  for (int i=0; i<54; ++i) {
+		double number = mmc.uniform(min, max);
+		std::cout << number << std::endl;
+	}
+
+std::cout << "uniform end" << std::endl;
+
+
+}
+
 void Test::exponencial(){
 	const int nintervals=10; // number of intervals
 

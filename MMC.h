@@ -3,6 +3,7 @@
  *
  *  Created on: 15 de ago de 2018
  *      Author: karla
+ *      Author: bruno
  */
 
 #ifndef MMC_H_
@@ -23,7 +24,7 @@ public:
 	struct RNG_Parameters{
 		uint64_t  ling_seed;
 		uint64_t multiplier;
-		uint64_t increment; // an arbitrary odd constant
+		uint64_t increment; // Select a sequence in the 2^63 range. must be odd!
 	};
 
 	double random();
