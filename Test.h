@@ -16,10 +16,13 @@ public:
 	void random();
 	void uniform();
 	void exponencial();
+	void erlang();
 	void normal();
 	void beta();
 	void gamma();
+	void weibull();
 	void logNormal();
+	void triangular();
 private:
 	MMC mmc;
 };

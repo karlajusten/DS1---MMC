@@ -34,20 +34,20 @@ void Test::random(){
 }
 
 void Test::uniform(){
-
 double min = 0;
-double max = 1; 
-
-
+double max = 10; 
 std::cout << "uniform_distribution " << min << " - " << max << ":" << std::endl;
-  for (int i=0; i<54; ++i) {
+   int p[10]={};
+
+   for (int i=0; i<nrolls; ++i) {
 		double number = mmc.uniform(min, max);
-		std::cout << number << std::endl;
+		if ((number>=min)&&(number<max)) ++p[int(number)];
 	}
 
-std::cout << "uniform end" << std::endl;
-
-
+   for (int i=0; i<10; ++i) {
+	 std::cout << i << "-" << (i+1) << ": ";
+	 std::cout << std::string(p[i]*nstars/nrolls,'*') << std::endl;
+   }
 }
 
 void Test::exponencial(){
@@ -115,11 +115,27 @@ void Test::gamma(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.gamma(2.0, 2.0);
+		double number = mmc.gamma(2.0, 2.56);
 		if (number<10) ++p[int(number)];
 	}
 
 	std::cout << "gamma_distribution (2.0,2.0):" << std::endl;
+
+	for (int i=0; i<10; ++i) {
+		std::cout << i << "-" << (i+1) << ": ";
+		std::cout << std::string(p[i]*nstars/nrolls,'*') << std::endl;
+	}
+}
+
+void Test::erlang(){
+	int p[10]={};
+
+	for (int i=0; i<nrolls; ++i) {
+		double number = mmc.gamma(2.0, 2);
+		if (number<10) ++p[int(number)];
+	}
+
+	std::cout << "erlang_distribution (2.0,2):" << std::endl;
 
 	for (int i=0; i<10; ++i) {
 		std::cout << i << "-" << (i+1) << ": ";
@@ -135,12 +151,12 @@ void Test::beta(){
 		if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
 	}
 
-	/*std::cout << "beta_distribution (2.0, 7.0, 0, 10):" << std::endl;
+	std::cout << "beta_distribution (2.0, 7.0, 0, 10):" << std::endl;
 
 	for (int i=0; i<10; ++i) {
 		std::cout << i << "-" << (i+1) << ": ";
 		std::cout << std::string(p[i]*nstars/nrolls,'*') << std::endl;
-	}*/
+	}
 }
 
 void Test::logNormal(){
@@ -158,3 +174,30 @@ void Test::logNormal(){
 		std::cout << std::string(p[i]*nstars/nrolls,'*') << std::endl;
 	}
 }
+
+void Test::weibull(){
+  
+
+  for (int i=1; i<50; ++i) {
+		double number = mmc.weibull(5.0, 0.5 );
+		std::cout << i << ": ";
+		std::cout << number << std::endl;
+	}
+}	
+
+void Test::triangular(){
+	int p[10]={};
+
+	for (int i=0; i<nrolls; ++i) {
+		double number = mmc.triangular(-1, 1, 0); //0 1 0.5
+		if ((number>=0.0)&&(number<10.0))++p[int(number)];
+	}
+
+	std::cout << "triangular_distribution (0.0,1.0, 0.5 ):" << std::endl;
+
+	for (int i=0; i<10; ++i) {
+		std::cout << i << "-" << (i+1) << ": ";
+		std::cout << std::string(p[i]*nstars/nrolls,'*') << std::endl;
+	}	
+}
+

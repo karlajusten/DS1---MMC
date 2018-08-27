@@ -58,8 +58,7 @@ double MMC::uniform(double min, double max){
 	     if (max == 1.0 && min == 0.0)
 	     	return ldexp(x, -32);  // pcg generate floats[0,1] nearest multiple of 1/2^32 
 	    uint64_t m =  x * double(max - min); 
-	    return (double) (m  >> 32) + min;
-	     
+	    return (double) (m  >> 32) + min;    
 }    
 
 double MMC::exponential(double mean){
@@ -94,26 +93,24 @@ double MMC::gamma(double mean, double alpha){
 	//std::cout << "pow(x, alpha-1) = "<< pow(x, alpha-1) << std::endl;
 	return 1/term * pow(x, alpha-1) * exp(-x/mean);
 }
-double erlang(double mean, int M){
-	//return this.gamma(mean, M)
+double MMC::erlang(double mean, int M){
+	return gamma(mean, M);  //Erlang is gamma where alpha is an integer; by Boost and GSL 
 }
-
 
 double MMC::beta(double alpha, double beta, double infLimit, double supLimit){
 	double term = (tgamma(alpha)*tgamma(beta));
 	if( term == 0 ) {
 		throw "Division by zero condition at beta distribution method!";
 	}
-	double x = random(); //PRECISA DE ALEATÓRIO UNIFORME!!!
+	double x = uniform(0.0, 1.0); //PRECISA DE ALEATÓRIO UNIFORME!!!
 	return (tgamma(alpha+beta)/term)*pow(x, alpha-1)*pow(1-x, beta-1);
 }
 
-double weibull(double alpha, double scale){
+double MMC::weibull(double alpha, double scale){
   double x = random();
   double m = pow (-log (x), 1 / scale);
 
   return alpha * m;
-
 }
 
 double MMC::logNormal(double mean, double stddev){
@@ -124,4 +121,17 @@ double MMC::logNormal(double mean, double stddev){
 	double num = log(x)-mean;
 	return (1/(x*stddev*sqrt(2*M_PI)))*exp((double)-(num*num)/(2*stddev*stddev));
 }
+
+double MMC::triangular(double min, double mode, double max){
+	double w =  min - mode;
+	double z =  max - mode;
+	double r =  max - min;
+	double x = random();
+	if (x < (w/r))
+		return min+sqrt(w*r*x);
+	else
+		return max-sqrt(z*r*(1.0 - x)); 
+}
+
+
 
