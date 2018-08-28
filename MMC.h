@@ -16,6 +16,7 @@ class MMC {
 
 private:
 	uint32_t rotr32(uint32_t x, unsigned r);
+	RNG_Parameters param;
 
 public:
 	MMC();
@@ -37,13 +38,11 @@ public:
 	double weibull(double alpha, double scale);
 	double logNormal(double mean, double stddev);
 	double triangular(double min, double mode, double max);
-	double discrete(double value, double acumProb, ...);
+	double discrete(const std::vector<double>&  Prob );  //TODO args
 
 	void setRNGparameters(RNG_Parameters param);
 	RNG_Parameters getRNGparameters();
 
-private:
-	RNG_Parameters param;
 };
 
 #endif /* MMC_H_ */

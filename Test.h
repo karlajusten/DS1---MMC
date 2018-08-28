@@ -23,6 +23,7 @@ public:
 	void weibull();
 	void logNormal();
 	void triangular();
+	void discrete();
 private:
 	MMC mmc;
 };

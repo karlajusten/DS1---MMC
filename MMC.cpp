@@ -11,6 +11,16 @@
 #include <math.h>
 #include <iostream>
 
+//discrete
+#include <cassert>
+#include <initializer_list>
+#include <iterator>
+#include <numeric>
+#include <tuple>
+#include <vector>
+
+
+
 MMC::MMC() {
 	RNG_Parameters defaul;
 	defaul.ling_seed = 0x4d595df4d0f33173;
@@ -94,7 +104,8 @@ double MMC::gamma(double mean, double alpha){
 	return 1/term * pow(x, alpha-1) * exp(-x/mean);
 }
 double MMC::erlang(double mean, int M){
-	return gamma(mean, M);  //Erlang is gamma where alpha is an integer; by Boost and GSL 
+	if (M > 0)
+	  return gamma(mean, M);  //Erlang is gamma where alpha is an integer; by Boost and GSL 
 }
 
 double MMC::beta(double alpha, double beta, double infLimit, double supLimit){
@@ -134,4 +145,123 @@ double MMC::triangular(double min, double mode, double max){
 }
 
 
+//  algorithm by DavidPal O(1) instead of the naive O(log N)
+double discrete( const std::vector<double>&  Prob) {
+//const std::vector<double>& weights, const size_t num_samples
+  discreta_rapida discreta(Prob);
+  
+return discreta()
+};
 
+namespace {
+// fila
+template<typename T, typename BidirectionalIterator>
+class fila {
+  public:
+    fila(const BidirectionalIterator base)
+      : base_(base), top_(base) { };
+
+    void push(const T& element) {
+      *top_ = element;
+      ++top_;
+    }
+
+    T pop() {
+      --top_;
+      return *top_;
+    }
+
+    bool empty() {
+      return top_ == base_;
+    }
+
+  private:
+    const BidirectionalIterator base_;
+    BidirectionalIterator top_;
+};
+}
+
+//  algorithm by DavidPal O(1) instead of the naive O(log N)
+class discreta_rapida {
+  public:
+    discreta_rapida(const std::vector<double>& pesos){
+        criar_buckets();
+    }
+
+    operator()() {
+      const double number = MMC:uniform(0.0, 1.0);
+      size_t index = floor(buckets_.size() * number);
+
+      const Bucket& bucket = buckets_[index];
+      if (number < std::get<2>(bucket))
+        return std::get<0>(bucket);
+      else
+        return std::get<1>(bucket);
+    }
+  
+  private:
+    typedef std::pair<double, double> Par;
+    typedef std::tuple<double, double, uint64_t> Bucket;
+
+    // List of probabilidades
+    std::vector<double> probabilidades_;
+    std::vector<Bucket> buckets_;
+
+
+    void criar_buckets() {
+      const size_t N = probabilidades_.size();
+      if (N <= 0) {
+        buckets_.emplace_back(0, 0, 0.0);
+        return;
+      }
+      //Duas pilhas em um vetor: Primeira cresce do início; Segunda pilha cresce a partir do final.
+      std::vector<Par> pares(N);
+      fila<Par, std::vector<Par>::iterator>
+        small(pares.begin());
+      fila<Par, std::vector<Par>::reverse_iterator>
+        large(pares.rbegin());
+
+      //Divide probabilidades entre pequenas e grandes
+      int i = 0;
+      for (auto probability : probabilidades_) {
+        if (probability < (1.0 / N)) {
+          small.push(Par(probability, i));
+        } else {
+          large.push(Par(probability, i));
+        }
+        ++i;
+      }
+
+      buckets_.reserve(N);
+
+      i = 0;
+      while (!small.empty() && !large.empty()) {
+        const Par s = small.pop();
+        const Par l = large.pop();
+
+        //  bucket misto
+        buckets_.emplace_back(s.second, l.second,
+                              s.first + static_cast<double>(i) / N);
+
+        // Qual o comprimento das sobras
+        const double sobras = s.first + l.first - static_cast<double>(1) / N;
+
+        // Re-insira as sobras 
+        if (sobras < (1.0 / N))
+          small.push(Par(sobras, l.second));
+        else
+          large.push(Par(sobras, l.second));
+
+        ++i;
+      }
+
+      /*// Criar buckets 
+      while (!large.empty()) {
+        const Par l = large.pop();
+        // ultimo arg nao pode ser NaN;
+        buckets_.emplace_back(l.second, l.second, 0.0);
+      }*/
+    }
+
+
+};

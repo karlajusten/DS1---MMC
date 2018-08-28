@@ -201,3 +201,26 @@ void Test::triangular(){
 	}	
 }
 
+void Test::discrete(){
+weights = {20, 10, 30};
+num_samples = 400;
+
+discreta_rapida discreta( weights );
+
+ std::vector<size_t> counts(weights.size(), 0);
+  for (size_t i = 0; i < num_samples; ++i) {
+    const int number = discreta();
+    assert(number >= 0);
+    assert(number < static_cast<int>(weights.size()));
+    ++counts[number];
+  }
+
+  std::cout << "counts:" << std::endl;
+  for (size_t i = 0; i < weights.size(); ++i)
+    cout << i << " (" << weights[i] << ") : "
+         << std::string(counts[i], '*') << endl;
+
+  cout << endl;
+}
+
+
