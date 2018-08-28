@@ -7,26 +7,22 @@
  */
 
 #include "MMC.h"
-#include <stdint.h>
-#include <math.h>
-#include <iostream>
 
-//discrete
-#include <cassert>
-#include <initializer_list>
-#include <iterator>
-#include <numeric>
-#include <tuple>
-#include <vector>
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 
+MMC::MMC() {  
+	
+	PCG_Parameters param;
+	param.ling_seed = 0x4d595df4d0f33173;
+	param.multiplier = 6364136223846793005u;
+	param.increment = 1442695040888963407u;
+	setRNGparameters(param);
+}
 
-MMC::MMC() {
-	RNG_Parameters defaul;
-	defaul.ling_seed = 0x4d595df4d0f33173;
-	defaul.multiplier = 6364136223846793005u;
-	defaul.increment = 1442695040888963407u;
-	setRNGparameters(defaul);
+MMC::MMC(const MMC& mmc_) {  
 }
 
 MMC::~MMC() {
@@ -38,11 +34,11 @@ MMC::~MMC() {
  */
 double  MMC::random(){
 
-	uint64_t x = getRNGparameters().ling_seed;
+	uint64_t x = param.ling_seed;
 	unsigned count = (unsigned)(x >> 59);
-	RNG_Parameters new_seed = getRNGparameters();
-	new_seed.ling_seed = x * getRNGparameters().multiplier + getRNGparameters().increment;
-	setRNGparameters(new_seed);
+	//PCG_Parameters new_seed = getRNGparameters();
+	param.ling_seed = x * param.multiplier + param.increment;
+	//setRNGparameters(new_seed);
 	x ^= x >> 18;								 // ^: XOR Exclusivo
 
 	return rotr32((uint32_t)(x >> 27), count);
@@ -63,7 +59,10 @@ MMC::RNG_Parameters  MMC::getRNGparameters(){
 	return this->param;
 }
 
-double MMC::uniform(double min, double max){
+double MMC::sampleUniform(double min, double max){
+	if ( min <0 || max <0 || max < min ) {
+      throw "Incorrect params at uniform distribution method!";
+   }   
 	    uint64_t x = random();
 	     if (max == 1.0 && min == 0.0)
 	     	return ldexp(x, -32);  // pcg generate floats[0,1] nearest multiple of 1/2^32 
@@ -71,7 +70,7 @@ double MMC::uniform(double min, double max){
 	    return (double) (m  >> 32) + min;    
 }    
 
-double MMC::exponential(double mean){
+double MMC::sampleExponential(double mean){
 	if( mean == 0 ) {
 		throw "Division by zero condition at exponential distribution method!";
 	}
@@ -79,10 +78,10 @@ double MMC::exponential(double mean){
 	return (1/mean)*exp((double)(-(x/mean)));
 }
 
-double MMC::normal(double mean, double stddev){
-	if( stddev == 0 ) {
-		throw "Division by zero condition at normal distribution method!";
-	}
+double MMC::sampleNormal(double mean, double stddev){
+	if ( mean <=0 || stddev <=0 ) {
+      throw "Incorrect params at Normal distribution method!";
+   	}
 	double x = random();
 	double num = (x-mean);
 	//std::cout << "num = "<< num << std::endl;
@@ -91,8 +90,10 @@ double MMC::normal(double mean, double stddev){
 	return (1/(stddev*sqrt(2*M_PI)))*exp((double)-(num*num)/(2*stddev*stddev));
 }
 
-double MMC::gamma(double mean, double alpha){
-
+double MMC::sampleGamma(double mean, double alpha){
+	if ( mean <=0 || alpha <=0 ) {
+      throw "Incorrect params at Gamma distribution method!";
+   	}
 	double term = (tgamma(alpha)*pow(mean, alpha));
 	//std::cout << "term = "<< term << std::endl;
 	if( term == 0 || mean==0) {
@@ -103,28 +104,40 @@ double MMC::gamma(double mean, double alpha){
 	//std::cout << "pow(x, alpha-1) = "<< pow(x, alpha-1) << std::endl;
 	return 1/term * pow(x, alpha-1) * exp(-x/mean);
 }
-double MMC::erlang(double mean, int M){
-	if (M > 0)
-	  return gamma(mean, M);  //Erlang is gamma where alpha is an integer; by Boost and GSL 
+double MMC::sampleErlang(double mean, int M){
+	if ( mean <0 || M <=0 ) {
+      throw "Incorrect params at Erlang distribution method!";
+   }   
+	  return this->sampleGamma(mean, M);  //Erlang is gamma where alpha is an integer; by Boost and GSL 
 }
 
-double MMC::beta(double alpha, double beta, double infLimit, double supLimit){
-	double term = (tgamma(alpha)*tgamma(beta));
+double MMC::sampleBeta(double alpha, double beta, double infLimit, double supLimit){
+	
+	 if ( alpha<=0.0 || beta<=0.0 || infLimit > supLimit || infLimit <0 || supLimit <0 ) {
+	 	throw "Incorrect params at beta distribution method!";
+	 }   
+  	double term = (tgamma(alpha)*tgamma(beta));
 	if( term == 0 ) {
 		throw "Division by zero condition at beta distribution method!";
 	}
-	double x = uniform(0.0, 1.0); //PRECISA DE ALEATÓRIO UNIFORME!!!
+	double x = sampleUniform(0.0, 1.0); 
 	return (tgamma(alpha+beta)/term)*pow(x, alpha-1)*pow(1-x, beta-1);
 }
 
-double MMC::weibull(double alpha, double scale){
-  double x = random();
-  double m = pow (-log (x), 1 / scale);
+double MMC::sampleWeibull(double alpha, double scale){
+	if ( scale <=0 || alpha <=0 ) {
+      throw "Incorrect params at Weibull distribution method!";
+   	}
+   	double x = random();
+   	double m = pow (-log (x), 1 / scale);
 
-  return alpha * m;
+   	return alpha * m;
 }
 
-double MMC::logNormal(double mean, double stddev){
+double MMC::sampleLogNormal(double mean, double stddev){
+	if ( mean <=0 || stddev <=0 ) {
+      throw "Incorrect params at LogNormal distribution method!";
+   	}
 	double x = random();
 	if( stddev == 0 || x == 0) {
 		throw "Division by zero condition at logNormal distribution method!";
@@ -133,7 +146,10 @@ double MMC::logNormal(double mean, double stddev){
 	return (1/(x*stddev*sqrt(2*M_PI)))*exp((double)-(num*num)/(2*stddev*stddev));
 }
 
-double MMC::triangular(double min, double mode, double max){
+double MMC::sampleTriangular(double min, double mode, double max){
+	if ( min <0 || max <0 || mode<0 ) {
+      throw "Incorrect params at Triangular distribution method!";
+   	}
 	double w =  min - mode;
 	double z =  max - mode;
 	double r =  max - min;
@@ -144,11 +160,12 @@ double MMC::triangular(double min, double mode, double max){
 		return max-sqrt(z*r*(1.0 - x)); 
 }
 
-
-//  algorithm by DavidPal O(1) instead of the naive O(log N)
-double discrete( const std::vector<double>&  Prob) {
+/*//  Algorithm by DavidPal O(1) instead of the naive O(log N)
+//  https://github.com/DavidPal/discrete-distribution
+//
+double sampleDiscrete( const std::vector<double>& Prob) {
 //const std::vector<double>& weights, const size_t num_samples
-  discreta_rapida discreta(Prob);
+  discreta_rapida discreta( Prob );
   
 return discreta()
 };
@@ -188,8 +205,8 @@ class discreta_rapida {
         criar_buckets();
     }
 
-    operator()() {
-      const double number = MMC:uniform(0.0, 1.0);
+   double operator() (){
+      const double number = MMC:sampleUniform(0.0, 1.0);
       size_t index = floor(buckets_.size() * number);
 
       const Bucket& bucket = buckets_[index];
@@ -255,13 +272,13 @@ class discreta_rapida {
         ++i;
       }
 
-      /*// Criar buckets 
+      // Criar buckets 
       while (!large.empty()) {
         const Par l = large.pop();
         // ultimo arg nao pode ser NaN;
         buckets_.emplace_back(l.second, l.second, 0.0);
-      }*/
+      }
     }
 
 
-};
+}; */

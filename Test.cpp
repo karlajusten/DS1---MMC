@@ -8,26 +8,38 @@
 #include <iostream>
 #include <stdio.h>
 #include "Test.h"
+#include <cassert>
+#include <initializer_list>
+#include <iterator>
+#include <numeric>
+#include <random>
+#include <tuple>
+#include <vector>
+
+using std::cout;
+using std::endl;
+
 
 #define buffer_size 512
 #define nrolls 10000  // number of experiments
 #define nstars 100    // maximum number of stars to distribute
 
 Test::Test() {
-	// TODO Auto-generated constructor stub
-
+	
+   mmc = std::make_unique<MMC>();
 }
 
 Test::~Test() {
 	// TODO Auto-generated destructor stub
 }
+
 void Test::random(){
 	uint32_t buffer[buffer_size];
 
 	while (1) {
 
 		for (int k = 0; k < buffer_size; k++)
-			buffer[k] = mmc.random();
+			buffer[k] = mmc->random();
 		fwrite((void *)buffer, sizeof(buffer), 1, stdout);
 
 	}
@@ -40,7 +52,7 @@ std::cout << "uniform_distribution " << min << " - " << max << ":" << std::endl;
    int p[10]={};
 
    for (int i=0; i<nrolls; ++i) {
-		double number = mmc.uniform(min, max);
+		double number = mmc->sampleUniform(min, max);
 		if ((number>=min)&&(number<max)) ++p[int(number)];
 	}
 
@@ -58,12 +70,12 @@ void Test::exponencial(){
 	int p[nintervals]={};
 
 	/*for (int i=0; i<50; ++i) {
-		double number = mmc.exponential(generator);
+		double number = mmc->exponential(generator);
 		std::cout << number << std::endl;
 	}*/
 
 	for (int i=0; i<nrolls; ++i) {
-	    long double number = mmc.exponential(generator);
+	    long double number = mmc->sampleExponential(generator);
 	    if(number>=0.9)
 	    	p[9]++;
 	    else if(number>=0.8)
@@ -99,7 +111,7 @@ void Test::normal(){
   int p[10]={};
 
   for (int i=0; i<nrolls; ++i) {
-	double number = mmc.normal(5.0, 2.0);
+	double number = mmc->sampleNormal(5.0, 2.0);
 	if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
   }
 
@@ -115,7 +127,7 @@ void Test::gamma(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.gamma(2.0, 2.56);
+		double number = mmc->sampleGamma(2.0, 2.56);
 		if (number<10) ++p[int(number)];
 	}
 
@@ -131,7 +143,7 @@ void Test::erlang(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.gamma(2.0, 2);
+		double number = mmc->sampleErlang(2.0, 2);
 		if (number<10) ++p[int(number)];
 	}
 
@@ -147,7 +159,7 @@ void Test::beta(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.beta(2.0, 7.0, 0, 10);
+		double number = mmc->sampleBeta(2.0, 7.0, 0, 10);
 		if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
 	}
 
@@ -163,7 +175,7 @@ void Test::logNormal(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.logNormal(0, 1);
+		double number = mmc->sampleLogNormal(0, 1);
 		if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
 	}
 
@@ -179,7 +191,7 @@ void Test::weibull(){
   
 
   for (int i=1; i<50; ++i) {
-		double number = mmc.weibull(5.0, 0.5 );
+		double number = mmc->sampleWeibull(5.0, 0.5 );
 		std::cout << i << ": ";
 		std::cout << number << std::endl;
 	}
@@ -189,7 +201,7 @@ void Test::triangular(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.triangular(-1, 1, 0); //0 1 0.5
+		double number = mmc->sampleTriangular(-1, 1, 0); //0 1 0.5
 		if ((number>=0.0)&&(number<10.0))++p[int(number)];
 	}
 
@@ -201,19 +213,18 @@ void Test::triangular(){
 	}	
 }
 
-void Test::discrete(){
-weights = {20, 10, 30};
-num_samples = 400;
+/*void Test::discrete(){
+	std::vector<double>& weights = {20, 10, 30};
+	int num_samples = 400;
+	mmc->sampleDiscrete( weights );
 
-discreta_rapida discreta( weights );
-
- std::vector<size_t> counts(weights.size(), 0);
-  for (size_t i = 0; i < num_samples; ++i) {
-    const int number = discreta();
-    assert(number >= 0);
-    assert(number < static_cast<int>(weights.size()));
-    ++counts[number];
-  }
+	std::vector<size_t> counts(weights.size(), 0);
+	for (size_t i = 0; i < num_samples; ++i) {
+	 const int number = sampleDiscrete();
+	 assert(number >= 0);
+	 assert(number < static_cast<int>(weights.size()));
+	 ++counts[number];
+}
 
   std::cout << "counts:" << std::endl;
   for (size_t i = 0; i < weights.size(); ++i)
@@ -222,5 +233,5 @@ discreta_rapida discreta( weights );
 
   cout << endl;
 }
-
+*/
 

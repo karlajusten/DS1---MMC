@@ -7,7 +7,14 @@
 
 #ifndef TEST_H_
 #define TEST_H_
+#include <iostream>
+#include <stdio.h>
+
 #include "MMC.h"
+#include <memory>
+#include <cassert>
+#include <vector>
+#include <iterator>
 
 class Test {
 public:
@@ -25,7 +32,7 @@ public:
 	void triangular();
 	void discrete();
 private:
-	MMC mmc;
+	std::unique_ptr<MMC> mmc;
 };
 
 #endif /* TEST_H_ */
