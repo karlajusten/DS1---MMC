@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 #include "MMC.h"
+#include "Sampler_if.h"
 #include <memory>
 #include <cassert>
 #include <vector>
@@ -32,7 +33,7 @@ public:
 	void triangular();
 	void discrete();
 private:
-	MMC mmc;
+	MMC* mmc;
 };
 
 #endif /* TEST_H_ */

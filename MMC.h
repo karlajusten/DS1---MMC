@@ -13,6 +13,7 @@
 #include <iostream>
 #define _USE_MATH_DEFINES	
 #include <cmath>
+#include "Sampler_if.h"
 //discrete
 #include <initializer_list>
 #include <iterator>
@@ -20,7 +21,7 @@
 #include <tuple>
 #include <vector>
 
-class MMC {
+class MMC : public Sampler_if {
 protected:
     MMC *mmc;
 
@@ -29,7 +30,7 @@ public:
 	MMC(const MMC& mmc_);
 	virtual ~MMC();
 	
-	struct RNG_Parameters{
+	struct MyRNG_Parameters: public RNG_Parameters{
 		uint64_t  seed;
 		uint64_t multiplier;
 		uint64_t increment; // Select a sequence in the 2^63 range. must be odd!
@@ -45,14 +46,14 @@ public:
 	double sampleWeibull(double alpha, double scale);
 	double sampleLogNormal(double mean, double stddev);
 	double sampleTriangular(double min, double mode, double max);
-	double sampleDiscrete(const std::vector<double>& Prob );  //TODO args
+	double sampleDiscrete(const std::vector<double>& Prob );
 
-	void setRNGparameters(RNG_Parameters param);
-	RNG_Parameters getRNGparameters();
+	void setRNGparameters(RNG_Parameters* param);
+	RNG_Parameters* getRNGparameters() const;
 
 private:
 	uint32_t rotr32(uint32_t x, unsigned r);
-	RNG_Parameters param;
+	MyRNG_Parameters* param = new MyRNG_Parameters();
 };
 
 #endif /* MMC_H_ */

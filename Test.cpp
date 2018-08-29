@@ -37,7 +37,7 @@ void Test::random(){
 	while (1) {
 
 		for (int k = 0; k < buffer_size; k++)
-			buffer[k] = mmc.random();
+			buffer[k] = mmc->random();
 		fwrite((void *)buffer, sizeof(buffer), 1, stdout);
 
 	}
@@ -50,7 +50,7 @@ std::cout << "uniform_distribution " << min << " - " << max << ":" << std::endl;
    int p[10]={};
 
    for (int i=0; i<nrolls; ++i) {
-		double number = mmc.sampleUniform(min, max);
+		double number = mmc->sampleUniform(min, max);
 		if ((number>=min)&&(number<max)) ++p[int(number)];
 	}
 
@@ -73,7 +73,7 @@ void Test::exponencial(){
 	}*/
 
 	for (int i=0; i<nrolls; ++i) {
-	    long double number = mmc.sampleExponential(generator);
+	    long double number = mmc->sampleExponential(generator);
 	    if(number>=0.9)
 	    	p[9]++;
 	    else if(number>=0.8)
@@ -109,7 +109,7 @@ void Test::normal(){
   int p[10]={};
 
   for (int i=0; i<nrolls; ++i) {
-	double number = mmc.sampleNormal(5.0, 2.0);
+	double number = mmc->sampleNormal(5.0, 2.0);
 	if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
   }
 
@@ -125,7 +125,7 @@ void Test::gamma(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.sampleGamma(2.0, 2.56);
+		double number = mmc->sampleGamma(2.0, 2.56);
 		if (number<10) ++p[int(number)];
 	}
 
@@ -141,7 +141,7 @@ void Test::erlang(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.sampleErlang(2.0, 2);
+		double number = mmc->sampleErlang(2.0, 2);
 		if (number<10) ++p[int(number)];
 	}
 
@@ -157,7 +157,7 @@ void Test::beta(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.sampleBeta(2.0, 7.0, 0, 10);
+		double number = mmc->sampleBeta(2.0, 7.0, 0, 10);
 		if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
 	}
 
@@ -173,7 +173,7 @@ void Test::logNormal(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.sampleLogNormal(0, 1);
+		double number = mmc->sampleLogNormal(0, 1);
 		if ((number>=0.0)&&(number<10.0)) ++p[int(number)];
 	}
 
@@ -189,7 +189,7 @@ void Test::weibull(){
   
 
   for (int i=1; i<50; ++i) {
-		double number = mmc.sampleWeibull(5.0, 0.5 );
+		double number = mmc->sampleWeibull(5.0, 0.5 );
 		std::cout << i << ": ";
 		std::cout << number << std::endl;
 	}
@@ -199,7 +199,7 @@ void Test::triangular(){
 	int p[10]={};
 
 	for (int i=0; i<nrolls; ++i) {
-		double number = mmc.sampleTriangular(-1, 1, 0); //0 1 0.5
+		double number = mmc->sampleTriangular(-1, 1, 0); //0 1 0.5
 		if ((number>=0.0)&&(number<10.0))++p[int(number)];
 	}
 
