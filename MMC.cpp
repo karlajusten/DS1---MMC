@@ -15,11 +15,9 @@
 
 MMC::MMC() {  
 	
-	PCG_Parameters param;
-	param.ling_seed = 0x4d595df4d0f33173;
+	param.seed = 0x4d595df4d0f33173;
 	param.multiplier = 6364136223846793005u;
 	param.increment = 1442695040888963407u;
-	setRNGparameters(param);
 }
 
 MMC::MMC(const MMC& mmc_) {  
@@ -34,10 +32,10 @@ MMC::~MMC() {
  */
 double  MMC::random(){
 
-	uint64_t x = param.ling_seed;
+	uint64_t x = param.seed;
 	unsigned count = (unsigned)(x >> 59);
 	//PCG_Parameters new_seed = getRNGparameters();
-	param.ling_seed = x * param.multiplier + param.increment;
+	param.seed = x * param.multiplier + param.increment;
 	//setRNGparameters(new_seed);
 	x ^= x >> 18;								 // ^: XOR Exclusivo
 
@@ -52,7 +50,7 @@ uint32_t MMC::rotr32(uint32_t x, unsigned r)
 }
 
 void  MMC::setRNGparameters(RNG_Parameters param){
-	this->param = param;
+	this->param.seed = param.seed;
 }
 
 MMC::RNG_Parameters  MMC::getRNGparameters(){

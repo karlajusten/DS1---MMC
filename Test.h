@@ -32,7 +32,7 @@ public:
 	void triangular();
 	void discrete();
 private:
-	std::unique_ptr<MMC> mmc;
+	MMC mmc;
 };
 
 #endif /* TEST_H_ */
